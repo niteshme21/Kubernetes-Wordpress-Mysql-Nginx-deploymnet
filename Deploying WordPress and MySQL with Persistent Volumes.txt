@@ -1,0 +1,196 @@
+
+
+WE should perform this in master node. and Nginx deployment should perform on this master as well.
+
+
+
+###################Worpress Mysql Deploymentt##########################
+
+
+COMMAND## Enetr this coomand and hit enttor
+
+
+cat <<EOF >./kustomization.yaml
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=YOUR_PASSWORD
+EOF
+
+##########################################################################################################
+
+##########Create file name as same as   mysql-deployment.yaml 
+
+
+Command##  vim mysql-deployment.yaml
+
+
+Entter data here same as i have provided in my git just copy data from ##mysql-deployment.yaml##  and paste inside this file
+
+
+
+######Create file name as same as     wordpress-deployment.yaml
+
+Command|##  vim wordpress-deployment.yaml
+
+
+Entter data here same as i have provided in my git just copy data from ##wordpress-deployment.yaml## and paste inside this file
+
+####################################################################
+
+
+
+Download the MySQL deployment configuration file.
+
+
+Command##  curl -LO https://k8s.io/examples/application/wordpress/mysql-deployment.yaml
+
+
+
+Download the WordPress configuration file.
+
+
+
+Commmand##  curl -LO https://k8s.io/examples/application/wordpress/wordpress-deployment.yaml
+
+
+#######################################################################3
+
+
+Add this to kustomization.yaml file.
+
+
+Command##  vim kustomization.yaml
+
+
+cat <<EOF >>./kustomization.yaml
+resources:
+  - mysql-deployment.yaml
+  - wordpress-deployment.yaml
+EOF
+
+
+
+Apply and Verify
+
+
+The kustomization.yaml contains all the resources for deploying a WordPress site and a MySQL database. You can apply the directory by
+
+
+
+Command##  kubectl apply -k ./
+
+
+
+
+
+Now you can verify that all objects exist.
+
+Verify that the Secret exists by running the following command:
+
+
+Command##  kubectl get secrets
+
+
+
+
+
+
+The response should be like this:
+
+NAME                    TYPE                                  DATA   AGE
+mysql-pass-c57bb4t7mf   Opaque                                1      9s
+
+
+
+
+
+Verify that a PersistentVolume got dynamically provisioned.
+
+Command##  kubectl get pvc
+
+
+
+
+Note: It can take up to a few minutes for the PVs to be provisioned and bound.
+The response should be like this:
+
+NAME             STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS       AGE
+mysql-pv-claim   Bound     pvc-8cbd7b2e-4044-11e9-b2bb-42010a800002   20Gi       RWO            standard           77s
+wp-pv-claim      Bound     pvc-8cd0df54-4044-11e9-b2bb-42010a800002   20Gi       RWO            standard           77s
+Verify that the Pod is running by running the following command:
+
+Command##  kubectl get pods
+
+
+
+Note: It can take up to a few minutes for the Pod's Status to be RUNNING.
+The response should be like this:
+
+NAME                               READY     STATUS    RESTARTS   AGE
+wordpress-mysql-1894417608-x5dzt   1/1       Running   0          40s
+
+
+
+
+
+Verify that the Service is running by running the following command:
+
+Command##   kubectl get services wordpress
+
+
+
+From here get the exttternal IP and you can see your Wordpress login page.... it will ttake time around 10 ro 15 minue. may need to wait maore....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
